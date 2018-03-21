@@ -21,7 +21,7 @@ Pretty up the output<br/>
 `jsonlz4_json -i sample.jsonlz4 | python -m json.tool`
 
 ##### LICENSE
-Creative Commons CC0
+Creative Commons [CC0]
 (http://creativecommons.org/publicdomain/zero/1.0/legalcode)  
 
 ##### AUTHOR

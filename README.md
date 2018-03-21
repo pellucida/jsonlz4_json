@@ -26,7 +26,7 @@ Creative Commons CC0
 
 ##### AUTHOR
 The code already exists in various forms on the net.
-This version is reduced to running on Linux or Unix systems
+This version is reduced to running on Linux or Unix systems<br/>
 with lz4 installed and lz4 development headers available.
 
 [James Sainsbury](mailto:toves@sdf.lonestar.org)

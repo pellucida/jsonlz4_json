@@ -25,5 +25,9 @@ Creative Commons CC0
 (http://creativecommons.org/publicdomain/zero/1.0/legalcode)  
 
 ##### AUTHOR
+The code already exists in various forms on the net.
+This version is reduced to running on Linux or Unix systems
+with lz4 installed and lz4 development headers available.
+
 [James Sainsbury](mailto:toves@sdf.lonestar.org)
 

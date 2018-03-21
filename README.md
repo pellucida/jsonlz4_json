@@ -1,26 +1,26 @@
 ## jsonlz4_json
 Uncompress lz4 compressed json bookmarks (Firefox)
 
-USAGE
-	jsonlz4_json [-i input] [-o output]
+##### USAGE
+	`jsonlz4_json [-i input] [-o output]
 
-BUGS
+##### BUGS
 Just for Linux/Unix 
 
-PREREQUISITES
+##### PREREQUISITES
 
 rhel7/centos7
 	lz4 	to run
 	lz4-devel to build
 
-EXAMPLES
-	jsonlz4_json -i bookmarks.jsonlz4 
-	jsonlz4_json -i sample.jsonlz4 | python -m json.tool
+##### EXAMPLES
+	`jsonlz4_json -i bookmarks.jsonlz4 
+	`jsonlz4_json -i sample.jsonlz4 | python -m json.tool
 
-LICENSE
+##### LICENSE
 Creative Commons CC0
 (http://creativecommons.org/publicdomain/zero/1.0/legalcode)  
 
-AUTHOR
+##### AUTHOR
 [James Sainsbury](mailto:toves@sdf.lonestar.org)
 

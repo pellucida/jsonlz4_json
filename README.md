@@ -14,7 +14,8 @@ rhel7/centos7
 	lz4-devel to build
 
 ##### EXAMPLES
-`jsonlz4_json -i bookmarks.jsonlz4` 
+`jsonlz4_json -i bookmarks.jsonlz4`
+
 `jsonlz4_json -i sample.jsonlz4 | python -m json.tool`
 
 ##### LICENSE

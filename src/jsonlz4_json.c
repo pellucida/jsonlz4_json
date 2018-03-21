@@ -87,7 +87,7 @@ static	int	file_load (FILE* input, char** memp, size_t* sizep) {
 	int	result	= -ENOMEM;
 	int	ch	= 0;
 	size_t	i	= 0;
-	size_t	finish	= -1;
+	size_t	finish	= err;
 	char*	buffer	= 0;
 	size_t	buffer_size	= 0;
 	

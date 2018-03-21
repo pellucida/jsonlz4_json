@@ -17,7 +17,7 @@ rhel7/centos7
 
 `jsonlz4_json -i bookmarks.jsonlz4 -o bookmarks.json`
 
-Pretty up the output 
+Pretty up the output<br/> 
 `jsonlz4_json -i sample.jsonlz4 | python -m json.tool`
 
 ##### LICENSE

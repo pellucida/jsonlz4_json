@@ -13,6 +13,9 @@ rhel7/centos7
 	lz4 	to run
 	lz4-devel to build
 
+The compression program `json_jsonlz4` just essentially the same code
+with compression replacing decompression.
+
 ##### EXAMPLES
 
 `jsonlz4_json -i bookmarks.jsonlz4 -o bookmarks.json`

@@ -1,5 +1,5 @@
 /*
-//	@(#) jsonl_jsonlz.c - compress firefox bookmarks
+//	@(#) json_jsonlz.c - compress firefox bookmarks
 */
 # include	<stdio.h>
 # include	<stdlib.h>

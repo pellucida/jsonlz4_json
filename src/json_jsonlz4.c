@@ -1,5 +1,5 @@
 /*
-//	@(#) jsonlz4_json.c - decompress firefox bookmarks
+//	@(#) jsonl_jsonlz.c - compress firefox bookmarks
 */
 # include	<stdio.h>
 # include	<stdlib.h>
@@ -15,7 +15,8 @@
 //
 // MOZLZ4 header
 //
-const char MOZLZ4_MAGIC[] = "mozLz40";
+# define	_MOZLZ4_MAGIC	"mozLz40"
+const char MOZLZ4_MAGIC[] = _MOZLZ4_MAGIC;
 enum	{
 	MOZLZ4_MAGIC_SIZE	= sizeof(MOZLZ4_MAGIC),
 };
@@ -119,34 +120,26 @@ static	int	file_load (FILE* input, char** memp, size_t* sizep) {
 }
 
 //
-// MOZLZ4 header load/verify magic/get original size
-//
-static	int	header_load (FILE* input, MOZLZ4_HDR* hdr, size_t hdrsize) {
-	int	result	= err;
-	if (fread (hdr, 1, hdrsize, input) == hdrsize)
+// Original size is in Intel little endian byte order
+// ie LSB first
+static	uint32_t put_uint32_le_t (uint32_t le) {
+	uint32_t	result	= 0;
+	unsigned char x[sizeof(result)];
+	x[0]	= le & 0xff;
+	x[1]	= (le >> 8) & 0xff;
+	x[2]	= (le >> 8*2) & 0xff;
+	x[3]	= (le >> 8*3) & 0xff;
+	memcpy (&result, x, sizeof(x));	
+	return	result;
+}
+static 	int	header_write (FILE* output, size_t size_original) {
+	size_t	result	= err;
+	MOZLZ4_HDR	header	= { .magic = _MOZLZ4_MAGIC, };
+	header.orig_size	= put_uint32_le_t (size_original);
+	if (fwrite (&header, 1, sizeof(header), output) == sizeof(header))
 		result	= ok;
 	return	result;
 }
-static	inline int header_verify (MOZLZ4_HDR data) {
-	int	result	= false;
-	if (memcmp (MOZLZ4_MAGIC, data.magic, MOZLZ4_MAGIC_SIZE)==0) {
-		result	= true;
-	}
-	return	result;
-}
-//
-// Original size is in Intel little endian byte order
-// ie LSB first
-static	uint32_t get_uint32_le_t (uint32_t le) {
-	unsigned char x[sizeof(le)];
-	memcpy (x, &le, sizeof(x));	
-	// 8 is bits_per_byte
-	return (((x[3]<<8 | x[2])<<8) | x[1])<<8 | x[0];
-}
-static	inline size_t header_orig_size (MOZLZ4_HDR data) {
-	return	get_uint32_le_t (data.orig_size);
-}
-
 //
 //
 //
@@ -157,7 +150,6 @@ int	main (int argc, char* argv[]) {
 	char*	inputfile	= 0;
 	char*	outputfile	= 0;
 	
-	MOZLZ4_HDR	header;	
 	char*	compressed_data	= 0;
 	size_t	size_compressed	= 0;
 	char*	decompressed_data	= 0;
@@ -198,30 +190,23 @@ int	main (int argc, char* argv[]) {
 			fatal ("Couldn't open output file '%s'\n", outputfile);
 		}
 	}
-	if (header_load (input, &header, sizeof(header)) != ok) {
-		fatal ("Couldn't load file header into memory\n");
-	}
-	if (file_load (input, &compressed_data, &size_compressed) != ok) {
+	if (file_load (input, &decompressed_data, &size_decompressed) != ok) {
 		fatal ("Couldn't load input file into memory\n");
 	}
-	if (!header_verify (header)) {
-		fatal ("Header verify - input file doesn't seem to be MOZLZ4 compressed\n");
+	size_original	= size_decompressed;
+	size_compressed	= LZ4_compressBound (size_original);
+	compressed_data	= malloc (size_compressed);
+	if (!compressed_data) {
+		fatal ("Couldn't allocate memory to compress file\n");
 	}
-
-	size_original	= header_orig_size (header);
-
-	decompressed_data	= malloc (size_original);
-	if (!decompressed_data) {
-		fatal ("Couldn't allocate memory to decompress file\n");
-	}
-	size_decompressed	= LZ4_decompress_safe(compressed_data, decompressed_data, size_compressed, size_original);
-	if (size_decompressed < 0) {
-		fatal ("LZ4 decompression failed\n");
+	size_compressed	= LZ4_compress_default(decompressed_data, compressed_data, size_decompressed, size_compressed);
+	if (size_compressed < 0) {
+		fatal ("LZ4 compression failed\n");
 	}	
-
-	if (size_decompressed != size_original)
-		warn ("Actual decompressed size differs from header value\n");
-	if (size_decompressed != fwrite (decompressed_data, 1, size_decompressed, output)) {
+	if (header_write (output, size_original)!=ok) {
+		fatal ("Writing header failed\n");
+	}
+	if (size_compressed != fwrite (compressed_data, 1, size_compressed, output)) {
 		warn ("Fewer bytes were written than were requested\n");
 	}
 	exit (EXIT_SUCCESS);	

@@ -3,10 +3,15 @@
 CFLAGS=-g
 LDFLAGS=-llz4 -g
 
-OBJ	= jsonlz4_json.o
-PROGNAME	= jsonlz4_json
+OBJ_D	= jsonlz4_json.o
+DECOMP	= jsonlz4_json
+OBJ_C	= json_jsonlz4.o
+COMP	= json_jsonlz4
 
-$(PROGNAME):	$(OBJ)
+ALL:	$(DECOMP) $(COMP)
+
+$(DECOMP):	$(OBJ_D)
+$(COMP):	$(OBJ_C)
 
 clean:
-	rm *.o $(PROGNAME)
+	rm *.o $(DECOMP) $(COMP)
